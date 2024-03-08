@@ -64,8 +64,8 @@ def extraire_informations_ligne(ligne):
     return heure_depart, heure_arrivee
 
 
-def afficher_html(chemin_fichier_html, first):
-    if first:
+def afficher_html(chemin_fichier_html, count):
+    if count == 0:
         webbrowser.open('file://' + chemin_fichier_html)
     else:
         pyautogui.hotkey('command', 'r')
@@ -100,7 +100,7 @@ def afficher_trajet(departure_station, arrival_station, departure_date, arrival_
 
 def main(departure_date, arrival_date, chemin_html):
     m = folium.Map(location=[47, 2], zoom_start=6)
-    first = True
+    count = 0
     stations = load_stations('stations.csv')
     for departure_station in stations:
         for arrival_station in stations:
@@ -108,11 +108,11 @@ def main(departure_date, arrival_date, chemin_html):
                 print("Trajet de {} à {} de {} à {}".format(departure_station, arrival_station, departure_date, arrival_date))
                 afficher_trajet(departure_station, arrival_station, departure_date, arrival_date, m)
                 m.save('carte_trajet.html')
-                afficher_html(chemin_html, first)
-                first = False
+                afficher_html(chemin_html, count)
+                count += 1
 
 
-chemin_html = '/Users/mathieu/Documents/Perso/trainline-python/carte_trajet.html'
+chemin_html = '/Users/mathieu/Documents/Perso/rail_aventure/carte_trajet.html'
 departure_date = "10/03/2024 12:00"
 arrival_date = "10/03/2024 18:00"
 
