@@ -1,13 +1,16 @@
 import pandas as pd
 import requests
+from dotenv import load_dotenv
+import os
 
-token_auth = "4c39b866-def2-4257-aa35-7816948e07e6"
+load_dotenv()
+API_KEY_SNCF = os.getenv("API_KEY_SNCF")
 
 
 def page_gares(numero_page):
     return requests.get(
-        ('https://api.sncf.com/v1/coverage/sncf/stop_areas?start_page={}').format(numero_page),
-        auth=(token_auth, ''))
+        ('https://api.sncf.com/v1/coverage/sncf/stop_areas?start_page={}')
+        .format(numero_page), auth=(API_KEY_SNCF, ''))
 
 
 page_initiale = page_gares(0)
