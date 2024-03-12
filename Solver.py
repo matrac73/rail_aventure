@@ -66,9 +66,10 @@ def display_graph(trains, gare_depart, heure_depart):
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels)
 
     # Afficher le graphique
-    plt.show()
+    temp_file = "/tmp/graph_image.png"  # Utilisez un chemin de fichier approprié
+    plt.savefig(temp_file, format="png")
 
-    return None
+    return temp_file
 
 
 def heuristique(heure, prix, co2):
@@ -115,23 +116,6 @@ def find_optimal_path_DFS(node, destination, current_time=0, current_price=0, cu
     return best_path
 
 
-def find_optimal_journey(trains_data, voyageur):
-    arbre = transform_data_tree(trains_data, voyageur['depart'], 0, 0, 0)
-
-    display_graph(trains_data, voyageur['depart'], 0)
-
-    resultat = find_optimal_path_DFS(arbre, voyageur['arrivee'])
-    if resultat:
-        print("Chemin optimal vers", voyageur['arrivee'], ":")
-        print("Heure:", resultat['heure'])
-        print("Prix:", resultat['prix'])
-        print("CO2:", resultat['co2'])
-        print("Chemin:", ' -> '.join(resultat['path']))
-    else:
-        print("Aucun chemin trouvé vers", voyageur['arrivee'])
-
-
-voyageur = {"depart": "Gare1", "arrivee": "Gare4", "date_depart": 7}
 trains = {
     'train_0': {"depart": "Gare1", "arrivee": "Gare2", "prix": 50, "co2": 10, "depart_heure": 8, "arrivee_heure": 10},
     'train_1': {"depart": "Gare2", "arrivee": "Gare3", "prix": 40, "co2": 8, "depart_heure": 11, "arrivee_heure": 13},
@@ -146,4 +130,25 @@ trains = {
     'train_10': {"depart": "Gare5", "arrivee": "Gare2", "prix": 50, "co2": 13, "depart_heure": 18, "arrivee_heure": 20},
 }
 
-find_optimal_journey(trains, voyageur)
+
+def find_optimal_journey(gare_départ, gare_arrivée, heure_départ):
+    heure_départ = float(heure_départ)
+    trains_data = trains
+    arbre = transform_data_tree(trains_data, gare_départ, heure_départ, 0, 0)
+
+    img_graph = display_graph(trains_data, gare_départ, 0)
+
+    resultat_json = find_optimal_path_DFS(arbre, gare_arrivée)
+
+    if resultat_json:
+        return (f"Chemin optimal vers {gare_arrivée} :\n"
+                f"Heure: {resultat_json['heure']}\n"
+                f"Prix: {resultat_json['prix']}\n"
+                f"CO2: {resultat_json['co2']}\n"
+                f"Chemin: {' -> '.join(resultat_json['path'])}", img_graph)
+    else:
+        return (f"Aucun chemin trouvé vers {gare_arrivée}", img_graph)
+
+
+voyageur = {"depart": "Gare1", "arrivee": "Gare4", "date_depart": 7}
+find_optimal_journey(voyageur["depart"], voyageur["arrivee"], voyageur["date_depart"])
