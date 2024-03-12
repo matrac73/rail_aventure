@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 def transform_data_tree(trains, gare, heure, prix, co2):
-    noeud = {'gare': gare, 'heure': heure, 'prix': prix, 'co2': co2, 'trains': []}
+    arbre = {'gare': gare, 'heure': heure, 'prix': prix, 'co2': co2, 'trains': []}
     for train_id, train_info in trains.items():
         if (gare == "" or train_info['depart'] == gare) and train_info['depart_heure'] > heure:
             prochaine_gare = train_info['arrivee']
@@ -11,8 +11,8 @@ def transform_data_tree(trains, gare, heure, prix, co2):
             prochain_prix = prix + train_info['prix']
             prochain_co2 = co2 + train_info['co2']
             prochain_noeud = transform_data_tree(trains, prochaine_gare, prochaine_heure, prochain_prix, prochain_co2)
-            noeud['trains'].append({train_id: prochain_noeud})
-    return noeud
+            arbre['trains'].append({train_id: prochain_noeud})
+    return arbre
 
 
 def transform_tree_graph(arbre, parent=None, graph=None):
