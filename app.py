@@ -1,5 +1,5 @@
 import gradio as gr
-from Solver import find_optimal_journey
+from services.Solver import find_optimal_journey
 
 choices = ["Gare1", "Gare2", "Gare3", "Gare4", "Gare5"]
 
