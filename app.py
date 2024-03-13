@@ -1,7 +1,7 @@
 import gradio as gr
-from services.Solver import find_optimal_journey
+from services.Solver import find_optimal_journey, lister_gares, trains
 
-choices = ["Gare1", "Gare2", "Gare3", "Gare4", "Gare5"]
+choices = lister_gares(trains)
 
 demo = gr.Interface(
     find_optimal_journey,
@@ -21,5 +21,5 @@ demo = gr.Interface(
     allow_flagging="never",
     )
 
-demo.launch(favicon_path="./favicon.ico")
+demo.launch(favicon_path="./data/favicon.ico")
 # demo.launch(share=True, favicon_path="favicon.ico")

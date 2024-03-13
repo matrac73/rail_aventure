@@ -18,9 +18,9 @@ def transform_data_tree(trains, gare, heure, prix, co2):
 def transform_tree_graph(arbre, parent=None, graph=None):
     if graph is None:
         graph = nx.DiGraph()
-    current_node = arbre['gare'] + '_' + str(arbre['heure']) + '_' + str(arbre['prix']) + '_' + str(arbre['co2'])
+    current_node = arbre['gare'] + '_' + str(arbre['heure']) + 'h_' + str(arbre['prix']) + '€_' + str(arbre['co2']) + 'gCO2'
     if parent:
-        parent_node = parent['gare'] + '_' + str(parent['heure']) + '_' + str(parent['prix']) + '_' + str(parent['co2'])
+        parent_node = parent['gare'] + '_' + str(parent['heure']) + 'h_' + str(parent['prix']) + '€_' + str(parent['co2']) + 'gCO2'
         for train in parent['trains']:
             if list(train.values())[0] == arbre:
                 train_taken = list(train.keys())[0]
@@ -32,10 +32,10 @@ def transform_tree_graph(arbre, parent=None, graph=None):
     return graph
 
 
-def display_graph(trains, gare_depart, heure_depart):
+def display_graph(trains, gare_depart, heure_depart, resultat_json):
     arbre = transform_data_tree(trains, gare_depart, heure_depart, 0, 0)
     graph = transform_tree_graph(arbre)
-    pos = nx.spring_layout(graph)
+    pos = nx.spring_layout(graph, k=0.15, iterations=20)  # default k=0.1 and iterations=50
 
     # Trouver le nœud initial
     initial_node = None
@@ -45,7 +45,8 @@ def display_graph(trains, gare_depart, heure_depart):
             break
 
     # Définition des options
-    node_colors = ['red' if node == initial_node else 'lightblue' for node in graph.nodes()]
+    node_colors = ['red' if node == initial_node
+                   else 'lightblue' for node in graph.nodes()]
     node_size = 300
     edge_color = 'gray'
     width = 2.0
@@ -116,18 +117,27 @@ def find_optimal_path_DFS(node, destination, current_time=0, current_price=0, cu
     return best_path
 
 
+def lister_gares(trains):
+    gares = set()
+    for _, details in trains.items():
+        gares.add(details['depart'])
+        gares.add(details['arrivee'])
+
+    return list(gares)
+
+
 trains = {
-    'train_0': {"depart": "Gare1", "arrivee": "Gare2", "prix": 50, "co2": 10, "depart_heure": 8, "arrivee_heure": 10},
-    'train_1': {"depart": "Gare2", "arrivee": "Gare3", "prix": 40, "co2": 8, "depart_heure": 11, "arrivee_heure": 13},
-    'train_2': {"depart": "Gare3", "arrivee": "Gare1", "prix": 10, "co2": 4, "depart_heure": 15, "arrivee_heure": 18},
-    'train_3': {"depart": "Gare1", "arrivee": "Gare2", "prix": 30, "co2": 11, "depart_heure": 1, "arrivee_heure": 5},
-    'train_4': {"depart": "Gare2", "arrivee": "Gare1", "prix": 30, "co2": 11, "depart_heure": 2, "arrivee_heure": 4},
-    'train_5': {"depart": "Gare2", "arrivee": "Gare3", "prix": 30, "co2": 11, "depart_heure": 7, "arrivee_heure": 15},
-    'train_6': {"depart": "Gare1", "arrivee": "Gare5", "prix": 60, "co2": 15, "depart_heure": 9, "arrivee_heure": 12},
-    'train_7': {"depart": "Gare2", "arrivee": "Gare4", "prix": 45, "co2": 12, "depart_heure": 12, "arrivee_heure": 16},
-    'train_8': {"depart": "Gare3", "arrivee": "Gare5", "prix": 55, "co2": 14, "depart_heure": 18, "arrivee_heure": 25},
-    'train_9': {"depart": "Gare4", "arrivee": "Gare1", "prix": 50, "co2": 13, "depart_heure": 16, "arrivee_heure": 19},
-    'train_10': {"depart": "Gare5", "arrivee": "Gare2", "prix": 50, "co2": 13, "depart_heure": 18, "arrivee_heure": 20},
+    'train_0': {"depart": "Paris", "arrivee": "Marseille", "prix": 80, "co2": 20, "depart_heure": 8, "arrivee_heure": 12},
+    'train_1': {"depart": "Marseille", "arrivee": "Lyon", "prix": 40, "co2": 10, "depart_heure": 11, "arrivee_heure": 13},
+    'train_2': {"depart": "Lyon", "arrivee": "Paris", "prix": 60, "co2": 10, "depart_heure": 15, "arrivee_heure": 17},
+    'train_3': {"depart": "Paris", "arrivee": "Marseille", "prix": 70, "co2": 20, "depart_heure": 1, "arrivee_heure": 5},
+    'train_4': {"depart": "Marseille", "arrivee": "Paris", "prix": 80, "co2": 20, "depart_heure": 2, "arrivee_heure": 6},
+    'train_5': {"depart": "Marseille", "arrivee": "Lyon", "prix": 30, "co2": 10, "depart_heure": 13, "arrivee_heure": 15},
+    'train_6': {"depart": "Paris", "arrivee": "Nice", "prix": 90, "co2": 30, "depart_heure": 9, "arrivee_heure": 15},
+    'train_7': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 50, "co2": 15, "depart_heure": 12, "arrivee_heure": 16},
+    'train_8': {"depart": "Lyon", "arrivee": "Nice", "prix": 50, "co2": 15, "depart_heure": 18, "arrivee_heure": 22},
+    'train_9': {"depart": "Bordeaux", "arrivee": "Paris", "prix": 50, "co2": 15, "depart_heure": 16, "arrivee_heure": 18},
+    'train_10': {"depart": "Nice", "arrivee": "Marseille", "prix": 30, "co2": 10, "depart_heure": 18, "arrivee_heure": 20},
 }
 
 
@@ -136,15 +146,14 @@ def find_optimal_journey(gare_départ, gare_arrivée, heure_départ):
     trains_data = trains
     arbre = transform_data_tree(trains_data, gare_départ, heure_départ, 0, 0)
 
-    img_graph = display_graph(trains_data, gare_départ, 0)
-
     resultat_json = find_optimal_path_DFS(arbre, gare_arrivée)
 
+    img_graph = display_graph(trains_data, gare_départ, 0, resultat_json)
+
     if resultat_json:
-        return (f"Chemin optimal vers {gare_arrivée} :\n"
-                f"Heure: {resultat_json['heure']}\n"
-                f"Prix: {resultat_json['prix']}\n"
-                f"CO2: {resultat_json['co2']}\n"
+        return (f"Heure: {resultat_json['heure']}h\n"
+                f"Prix: {resultat_json['prix']}€\n"
+                f"CO2: {resultat_json['co2']}gCO2\n"
                 f"Chemin: {' -> '.join(resultat_json['path'])}", img_graph)
     else:
         return (f"Aucun chemin trouvé vers {gare_arrivée}", img_graph)
