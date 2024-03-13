@@ -1,6 +1,5 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-import pandas as pd
 
 trains = {
     'train_0': {"depart": "Paris", "arrivee": "Marseille", "prix": 80, "co2": 20, "depart_heure": 8, "arrivee_heure": 12},
@@ -138,7 +137,6 @@ def lister_gares(trains):
 
 def find_optimal_journey(gare_départ, gare_arrivée, heure_départ, poids_heure, poids_prix, poids_CO2):
     heure_départ = float(heure_départ)
-    df_trains = pd.DataFrame(trains)
 
     arbre = transform_data_tree(trains, gare_départ, heure_départ, 0, 0)
 
@@ -150,6 +148,6 @@ def find_optimal_journey(gare_départ, gare_arrivée, heure_départ, poids_heure
         return (f"Heure: {resultat_json['heure']}h\n"
                 f"Prix: {resultat_json['prix']}€\n"
                 f"CO2: {resultat_json['co2']}gCO2\n"
-                f"Chemin: {' -> '.join(resultat_json['path'])}", img_graph, df_trains)
+                f"Chemin: {' -> '.join(resultat_json['path'])}", img_graph)
     else:
-        return (f"Aucun chemin trouvé vers {gare_arrivée}", img_graph, df_trains)
+        return (f"Aucun chemin trouvé vers {gare_arrivée}", img_graph)
