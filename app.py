@@ -6,13 +6,17 @@ choices = lister_gares(trains)
 demo = gr.Interface(
     find_optimal_journey,
     inputs=[
-        gr.components.Dropdown(choices=choices, label="Gare de départ"),
-        gr.components.Dropdown(choices=choices, label="Gare d'arrivée"),
-        gr.components.Slider(minimum=0, maximum=24, step=1, label="Heure de départ")
+        gr.components.Dropdown(choices=choices, label="Gare de départ", value='Paris'),
+        gr.components.Dropdown(choices=choices, label="Gare d'arrivée", value='Bordeaux'),
+        gr.components.Slider(minimum=0, maximum=24, step=1, label="Heure de départ", value=0),
+        gr.components.Slider(minimum=0, maximum=5, step=1, label="Importance de la durée pour le voyageur", value=1),
+        gr.components.Slider(minimum=0, maximum=5, step=1, label="Importance du prix pour le voyageur", value=1),
+        gr.components.Slider(minimum=0, maximum=5, step=1, label="Importance des émissions CO2 pour le voyageur", value=1)
         ],
     outputs=[
         gr.components.Textbox(label='Chemin Optimal'),
         gr.components.Image(label='Graph des chemins potentiels'),
+        gr.components.Dataframe(label='Trains en circulation')
         ],
     css="footer {visibility: hidden}",
     title="Rail aventure",

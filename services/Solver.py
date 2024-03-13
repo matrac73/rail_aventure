@@ -1,5 +1,20 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import pandas as pd
+
+trains = {
+    'train_0': {"depart": "Paris", "arrivee": "Marseille", "prix": 80, "co2": 20, "depart_heure": 8, "arrivee_heure": 12},
+    'train_1': {"depart": "Marseille", "arrivee": "Lyon", "prix": 40, "co2": 10, "depart_heure": 11, "arrivee_heure": 13},
+    'train_2': {"depart": "Lyon", "arrivee": "Paris", "prix": 60, "co2": 10, "depart_heure": 15, "arrivee_heure": 17},
+    'train_3': {"depart": "Paris", "arrivee": "Marseille", "prix": 70, "co2": 20, "depart_heure": 1, "arrivee_heure": 5},
+    'train_4': {"depart": "Marseille", "arrivee": "Paris", "prix": 80, "co2": 20, "depart_heure": 2, "arrivee_heure": 6},
+    'train_5': {"depart": "Marseille", "arrivee": "Lyon", "prix": 30, "co2": 10, "depart_heure": 13, "arrivee_heure": 15},
+    'train_6': {"depart": "Paris", "arrivee": "Nice", "prix": 90, "co2": 30, "depart_heure": 9, "arrivee_heure": 15},
+    'train_7': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 50, "co2": 15, "depart_heure": 12, "arrivee_heure": 16},
+    'train_8': {"depart": "Lyon", "arrivee": "Nice", "prix": 50, "co2": 15, "depart_heure": 18, "arrivee_heure": 22},
+    'train_9': {"depart": "Bordeaux", "arrivee": "Paris", "prix": 50, "co2": 15, "depart_heure": 16, "arrivee_heure": 18},
+    'train_10': {"depart": "Nice", "arrivee": "Marseille", "prix": 30, "co2": 10, "depart_heure": 18, "arrivee_heure": 20},
+}
 
 
 def transform_data_tree(trains, gare, heure, prix, co2):
@@ -32,7 +47,7 @@ def transform_tree_graph(arbre, parent=None, graph=None):
     return graph
 
 
-def display_graph(trains, gare_depart, heure_depart, resultat_json):
+def display_graph(trains, gare_depart, heure_depart):
     arbre = transform_data_tree(trains, gare_depart, heure_depart, 0, 0)
     graph = transform_tree_graph(arbre)
     pos = nx.spring_layout(graph, k=0.15, iterations=20)  # default k=0.1 and iterations=50
@@ -73,17 +88,12 @@ def display_graph(trains, gare_depart, heure_depart, resultat_json):
     return temp_file
 
 
-def heuristique(heure, prix, co2):
-    poids_heure = 1
-    poids_prix = 2
-    poids_co2 = 3
-
+def heuristique(heure, prix, co2, poids_heure, poids_prix, poids_co2):
     valeur_heuristique = poids_heure * heure + poids_prix * prix + poids_co2 * co2
-
     return valeur_heuristique
 
 
-def find_optimal_path_DFS(node, destination, current_time=0, current_price=0, current_co2=0):
+def find_optimal_path_DFS(node, destination, poids_heure, poids_prix, poids_CO2, current_time=0, current_price=0, current_co2=0):
     if node['gare'] == destination:
         return {
             'heure': current_time,
@@ -98,10 +108,10 @@ def find_optimal_path_DFS(node, destination, current_time=0, current_price=0, cu
         nom_train = list(train.keys())[0]
         next_node = train[nom_train]
         next_time = train[nom_train]['heure']
-        next_price = current_price + train[nom_train]['prix']
-        next_co2 = current_co2 + train[nom_train]['co2']
+        next_price = train[nom_train]['prix']
+        next_co2 = train[nom_train]['co2']
 
-        path_result = find_optimal_path_DFS(next_node, destination, next_time, next_price, next_co2)
+        path_result = find_optimal_path_DFS(next_node, destination, poids_heure, poids_prix, poids_CO2, next_time, next_price, next_co2)
 
         if path_result:
             path_result['path'].insert(0, nom_train)
@@ -109,8 +119,8 @@ def find_optimal_path_DFS(node, destination, current_time=0, current_price=0, cu
             if not best_path:
                 best_path = path_result
             else:
-                heuristique_path = heuristique(path_result['heure'], path_result['prix'], path_result['co2'])
-                heuristique_best_path = heuristique(best_path['heure'], best_path['prix'], best_path['co2'])
+                heuristique_path = heuristique(path_result['heure'], path_result['prix'], path_result['co2'], poids_heure, poids_prix, poids_CO2)
+                heuristique_best_path = heuristique(best_path['heure'], best_path['prix'], best_path['co2'], poids_heure, poids_prix, poids_CO2)
                 if heuristique_path < heuristique_best_path:
                     best_path = path_result
 
@@ -126,38 +136,20 @@ def lister_gares(trains):
     return list(gares)
 
 
-trains = {
-    'train_0': {"depart": "Paris", "arrivee": "Marseille", "prix": 80, "co2": 20, "depart_heure": 8, "arrivee_heure": 12},
-    'train_1': {"depart": "Marseille", "arrivee": "Lyon", "prix": 40, "co2": 10, "depart_heure": 11, "arrivee_heure": 13},
-    'train_2': {"depart": "Lyon", "arrivee": "Paris", "prix": 60, "co2": 10, "depart_heure": 15, "arrivee_heure": 17},
-    'train_3': {"depart": "Paris", "arrivee": "Marseille", "prix": 70, "co2": 20, "depart_heure": 1, "arrivee_heure": 5},
-    'train_4': {"depart": "Marseille", "arrivee": "Paris", "prix": 80, "co2": 20, "depart_heure": 2, "arrivee_heure": 6},
-    'train_5': {"depart": "Marseille", "arrivee": "Lyon", "prix": 30, "co2": 10, "depart_heure": 13, "arrivee_heure": 15},
-    'train_6': {"depart": "Paris", "arrivee": "Nice", "prix": 90, "co2": 30, "depart_heure": 9, "arrivee_heure": 15},
-    'train_7': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 50, "co2": 15, "depart_heure": 12, "arrivee_heure": 16},
-    'train_8': {"depart": "Lyon", "arrivee": "Nice", "prix": 50, "co2": 15, "depart_heure": 18, "arrivee_heure": 22},
-    'train_9': {"depart": "Bordeaux", "arrivee": "Paris", "prix": 50, "co2": 15, "depart_heure": 16, "arrivee_heure": 18},
-    'train_10': {"depart": "Nice", "arrivee": "Marseille", "prix": 30, "co2": 10, "depart_heure": 18, "arrivee_heure": 20},
-}
-
-
-def find_optimal_journey(gare_départ, gare_arrivée, heure_départ):
+def find_optimal_journey(gare_départ, gare_arrivée, heure_départ, poids_heure, poids_prix, poids_CO2):
     heure_départ = float(heure_départ)
-    trains_data = trains
-    arbre = transform_data_tree(trains_data, gare_départ, heure_départ, 0, 0)
+    df_trains = pd.DataFrame(trains)
 
-    resultat_json = find_optimal_path_DFS(arbre, gare_arrivée)
+    arbre = transform_data_tree(trains, gare_départ, heure_départ, 0, 0)
 
-    img_graph = display_graph(trains_data, gare_départ, 0, resultat_json)
+    resultat_json = find_optimal_path_DFS(arbre, gare_arrivée, poids_heure, poids_prix, poids_CO2)
+
+    img_graph = display_graph(trains, gare_départ, 0)
 
     if resultat_json:
         return (f"Heure: {resultat_json['heure']}h\n"
                 f"Prix: {resultat_json['prix']}€\n"
                 f"CO2: {resultat_json['co2']}gCO2\n"
-                f"Chemin: {' -> '.join(resultat_json['path'])}", img_graph)
+                f"Chemin: {' -> '.join(resultat_json['path'])}", img_graph, df_trains)
     else:
-        return (f"Aucun chemin trouvé vers {gare_arrivée}", img_graph)
-
-
-voyageur = {"depart": "Gare1", "arrivee": "Gare4", "date_depart": 7}
-find_optimal_journey(voyageur["depart"], voyageur["arrivee"], voyageur["date_depart"])
+        return (f"Aucun chemin trouvé vers {gare_arrivée}", img_graph, df_trains)
