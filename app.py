@@ -53,5 +53,5 @@ demo = gr.TabbedInterface(
     theme=gr.themes.Base()
     )
 
-demo.launch(favicon_path="./data/favicon.ico")
-# demo.launch(favicon_path="./data/favicon.ico", share=True)
+# demo.launch(favicon_path="./data/favicon.ico")
+demo.launch(favicon_path="./data/favicon.ico", share=True)
