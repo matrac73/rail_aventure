@@ -28,6 +28,8 @@ def interface_calculateur():
         outputs=outputs,
         css="footer {visibility: hidden}",
         allow_flagging="never",
+        submit_btn="Calculer",
+        clear_btn="Effacer"
         )
 
 
@@ -53,5 +55,5 @@ demo = gr.TabbedInterface(
     theme=gr.themes.Base()
     )
 
-# demo.launch(favicon_path="./data/favicon.ico")
-demo.launch(favicon_path="./data/favicon.ico", share=True)
+demo.launch(favicon_path="./data/favicon.ico")
+# demo.launch(favicon_path="./data/favicon.ico", share=True)

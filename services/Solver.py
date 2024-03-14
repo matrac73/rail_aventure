@@ -198,8 +198,10 @@ def find_optimal_path_A_star(node, destination, poids_heure, poids_prix, poids_C
     closed_set = set()
 
     while open_set:
-        open_set.sort()  # Sort by f_score
-        f_score, g_score, current_node, time, price, co2, path = open_set.pop(0)
+        open_set = sorted(open_set, key=lambda x: x[0])
+        _, g_score, current_node, time, price, co2, path = open_set.pop(0)
+        if len(path) > 0:
+            path[-2], path[-1] = path[-1], path[-2]
 
         if current_node['gare'] == destination:
             return {
