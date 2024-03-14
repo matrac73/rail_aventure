@@ -1,19 +1,80 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-trains = {
-    'train_0': {"depart": "Paris", "arrivee": "Marseille", "prix": 80, "co2": 20, "depart_heure": 8, "arrivee_heure": 12},
-    'train_1': {"depart": "Marseille", "arrivee": "Lyon", "prix": 40, "co2": 10, "depart_heure": 11, "arrivee_heure": 13},
-    'train_2': {"depart": "Lyon", "arrivee": "Paris", "prix": 60, "co2": 10, "depart_heure": 15, "arrivee_heure": 17},
-    'train_3': {"depart": "Paris", "arrivee": "Marseille", "prix": 70, "co2": 20, "depart_heure": 1, "arrivee_heure": 5},
-    'train_4': {"depart": "Marseille", "arrivee": "Paris", "prix": 80, "co2": 20, "depart_heure": 2, "arrivee_heure": 6},
-    'train_5': {"depart": "Marseille", "arrivee": "Lyon", "prix": 30, "co2": 10, "depart_heure": 13, "arrivee_heure": 15},
-    'train_6': {"depart": "Paris", "arrivee": "Nice", "prix": 90, "co2": 30, "depart_heure": 9, "arrivee_heure": 15},
-    'train_7': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 50, "co2": 15, "depart_heure": 12, "arrivee_heure": 16},
-    'train_8': {"depart": "Lyon", "arrivee": "Nice", "prix": 50, "co2": 15, "depart_heure": 18, "arrivee_heure": 22},
-    'train_9': {"depart": "Bordeaux", "arrivee": "Paris", "prix": 50, "co2": 15, "depart_heure": 16, "arrivee_heure": 18},
-    'train_10': {"depart": "Nice", "arrivee": "Marseille", "prix": 30, "co2": 10, "depart_heure": 18, "arrivee_heure": 20},
+trains_demo = {
+    'train_0': {"depart": "Paris", "arrivee": "Lyon", "prix": 50, "co2": 30, "depart_heure": 1, "arrivee_heure": 3},
+    'train_1': {"depart": "Lyon", "arrivee": "Marseille", "prix": 50, "co2": 30, "depart_heure": 4, "arrivee_heure": 6},
+    'train_2': {"depart": "Paris", "arrivee": "Lyon", "prix": 10, "co2": 20, "depart_heure": 2, "arrivee_heure": 6},
+    'train_3': {"depart": "Lyon", "arrivee": "Marseille", "prix": 10, "co2": 20, "depart_heure": 7, "arrivee_heure": 11},
+    'train_4': {"depart": "Paris", "arrivee": "Bordeaux", "prix": 70, "co2": 100, "depart_heure": 1, "arrivee_heure": 6},
+    'train_5': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 50, "co2": 30, "depart_heure": 7, "arrivee_heure": 10},
+    'train_6': {"depart": "Bordeaux", "arrivee": "Marseille", "prix": 10, "co2": 20, "depart_heure": 7, "arrivee_heure": 14},
+    'train_7': {"depart": "Bordeaux", "arrivee": "Marseille", "prix": 50, "co2": 30, "depart_heure": 10, "arrivee_heure": 12},
+    'train_8': {"depart": "Marseille", "arrivee": "Nice", "prix": 10, "co2": 10, "depart_heure": 15, "arrivee_heure": 17},
+    'train_9': {"depart": "Marseille", "arrivee": "Nice", "prix": 30, "co2": 15, "depart_heure": 13, "arrivee_heure": 15},
 }
+
+trains = {
+    'train_0': {"depart": "Paris", "arrivee": "Lyon", "prix": 50, "co2": 30, "depart_heure": 1, "arrivee_heure": 3},
+    'train_1': {"depart": "Lyon", "arrivee": "Marseille", "prix": 50, "co2": 30, "depart_heure": 4, "arrivee_heure": 6},
+    'train_2': {"depart": "Paris", "arrivee": "Lyon", "prix": 10, "co2": 20, "depart_heure": 2, "arrivee_heure": 6},
+    'train_3': {"depart": "Lyon", "arrivee": "Marseille", "prix": 10, "co2": 20, "depart_heure": 7, "arrivee_heure": 11},
+    'train_4': {"depart": "Paris", "arrivee": "Bordeaux", "prix": 70, "co2": 100, "depart_heure": 1, "arrivee_heure": 6},
+    'train_5': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 50, "co2": 30, "depart_heure": 7, "arrivee_heure": 10},
+    'train_6': {"depart": "Paris", "arrivee": "Bordeaux", "prix": 50, "co2": 30, "depart_heure": 7, "arrivee_heure": 10},
+    'train_7': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 50, "co2": 15, "depart_heure": 8, "arrivee_heure": 16},
+    'train_8': {"depart": "Marseille", "arrivee": "Nice", "prix": 30, "co2": 20, "depart_heure": 9, "arrivee_heure": 11},
+    'train_9': {"depart": "Bordeaux", "arrivee": "Paris", "prix": 50, "co2": 15, "depart_heure": 10, "arrivee_heure": 18},
+    'train_10': {"depart": "Lyon", "arrivee": "Marseille", "prix": 50, "co2": 20, "depart_heure": 7, "arrivee_heure": 9},
+    'train_11': {"depart": "Paris", "arrivee": "Lyon", "prix": 60, "co2": 35, "depart_heure": 2, "arrivee_heure": 5},
+    'train_12': {"depart": "Lyon", "arrivee": "Marseille", "prix": 55, "co2": 35, "depart_heure": 5, "arrivee_heure": 7},
+    'train_13': {"depart": "Paris", "arrivee": "Lyon", "prix": 40, "co2": 25, "depart_heure": 3, "arrivee_heure": 7},
+    'train_14': {"depart": "Lyon", "arrivee": "Marseille", "prix": 40, "co2": 25, "depart_heure": 8, "arrivee_heure": 12},
+    'train_15': {"depart": "Paris", "arrivee": "Bordeaux", "prix": 75, "co2": 110, "depart_heure": 2, "arrivee_heure": 7},
+    'train_16': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 55, "co2": 35, "depart_heure": 8, "arrivee_heure": 11},
+    'train_17': {"depart": "Paris", "arrivee": "Lyon", "prix": 80, "co2": 30, "depart_heure": 8, "arrivee_heure": 10},
+    'train_18': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 55, "co2": 20, "depart_heure": 9, "arrivee_heure": 17},
+    'train_19': {"depart": "Lyon", "arrivee": "Marseille", "prix": 10, "co2": 20, "depart_heure": 10, "arrivee_heure": 14},
+    'train_20': {"depart": "Bordeaux", "arrivee": "Paris", "prix": 55, "co2": 20, "depart_heure": 11, "arrivee_heure": 19},
+    'train_21': {"depart": "Marseille", "arrivee": "Lyon", "prix": 55, "co2": 25, "depart_heure": 8, "arrivee_heure": 10},
+    'train_22': {"depart": "Paris", "arrivee": "Lyon", "prix": 65, "co2": 40, "depart_heure": 4, "arrivee_heure": 6},
+    'train_23': {"depart": "Lyon", "arrivee": "Marseille", "prix": 60, "co2": 40, "depart_heure": 6, "arrivee_heure": 8},
+    'train_24': {"depart": "Paris", "arrivee": "Lyon", "prix": 45, "co2": 30, "depart_heure": 5, "arrivee_heure": 9},
+    'train_25': {"depart": "Lyon", "arrivee": "Marseille", "prix": 45, "co2": 30, "depart_heure": 9, "arrivee_heure": 13},
+    'train_26': {"depart": "Paris", "arrivee": "Bordeaux", "prix": 80, "co2": 105, "depart_heure": 3, "arrivee_heure": 8},
+    'train_27': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 60, "co2": 35, "depart_heure": 9, "arrivee_heure": 12},
+    'train_28': {"depart": "Paris", "arrivee": "Bordeaux", "prix": 70, "co2": 30, "depart_heure": 15, "arrivee_heure": 18},
+    'train_29': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 60, "co2": 25, "depart_heure": 10, "arrivee_heure": 18},
+    'train_30': {"depart": "Nice", "arrivee": "Marseille", "prix": 20, "co2": 25, "depart_heure": 11, "arrivee_heure": 13},
+    'train_31': {"depart": "Bordeaux", "arrivee": "Paris", "prix": 10, "co2": 25, "depart_heure": 12, "arrivee_heure": 20},
+    'train_32': {"depart": "Lyon", "arrivee": "Marseille", "prix": 60, "co2": 30, "depart_heure": 9, "arrivee_heure": 11},
+    'train_33': {"depart": "Paris", "arrivee": "Lyon", "prix": 70, "co2": 45, "depart_heure": 6, "arrivee_heure": 8},
+    'train_34': {"depart": "Lyon", "arrivee": "Marseille", "prix": 65, "co2": 45, "depart_heure": 7, "arrivee_heure": 9},
+    'train_35': {"depart": "Paris", "arrivee": "Lyon", "prix": 50, "co2": 35, "depart_heure": 7, "arrivee_heure": 11},
+    'train_36': {"depart": "Lyon", "arrivee": "Marseille", "prix": 50, "co2": 35, "depart_heure": 10, "arrivee_heure": 14},
+    'train_37': {"depart": "Paris", "arrivee": "Lyon", "prix": 10, "co2": 20, "depart_heure": 4, "arrivee_heure": 9},
+    'train_38': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 65, "co2": 40, "depart_heure": 10, "arrivee_heure": 13},
+    'train_39': {"depart": "Marseille", "arrivee": "Nice", "prix": 30, "co2": 20, "depart_heure": 20, "arrivee_heure": 22},
+    'train_40': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 65, "co2": 30, "depart_heure": 11, "arrivee_heure": 19},
+    'train_41': {"depart": "Marseille", "arrivee": "Lyon", "prix": 40, "co2": 30, "depart_heure": 12, "arrivee_heure": 14},
+    'train_42': {"depart": "Bordeaux", "arrivee": "Paris", "prix": 10, "co2": 30, "depart_heure": 13, "arrivee_heure": 21},
+    'train_43': {"depart": "Lyon", "arrivee": "Marseille", "prix": 65, "co2": 35, "depart_heure": 10, "arrivee_heure": 12},
+    'train_44': {"depart": "Paris", "arrivee": "Lyon", "prix": 75, "co2": 50, "depart_heure": 7, "arrivee_heure": 9},
+    'train_45': {"depart": "Lyon", "arrivee": "Marseille", "prix": 70, "co2": 50, "depart_heure": 8, "arrivee_heure": 10},
+    'train_46': {"depart": "Paris", "arrivee": "Lyon", "prix": 55, "co2": 40, "depart_heure": 8, "arrivee_heure": 12},
+    'train_47': {"depart": "Lyon", "arrivee": "Marseille", "prix": 55, "co2": 40, "depart_heure": 11, "arrivee_heure": 15},
+    'train_48': {"depart": "Paris", "arrivee": "Bordeaux", "prix": 90, "co2": 120, "depart_heure": 5, "arrivee_heure": 10},
+    'train_49': {"depart": "Marseille", "arrivee": "Bordeaux", "prix": 70, "co2": 45, "depart_heure": 11, "arrivee_heure": 14},
+}
+
+
+def lister_gares(trains):
+    gares = set()
+    for _, details in trains.items():
+        gares.add(details['depart'])
+        gares.add(details['arrivee'])
+
+    return list(gares)
 
 
 def transform_data_tree(trains, gare, heure, prix, co2):
@@ -126,26 +187,66 @@ def find_optimal_path_DFS(node, destination, poids_heure, poids_prix, poids_CO2,
     return best_path
 
 
-def lister_gares(trains):
-    gares = set()
-    for _, details in trains.items():
-        gares.add(details['depart'])
-        gares.add(details['arrivee'])
+def find_optimal_path_A_star(node, destination, poids_heure, poids_prix, poids_CO2, current_time=0, current_price=0, current_co2=0):
+    open_set = [(heuristique(node['heure'], node['prix'], node['co2'], poids_heure, poids_prix, poids_CO2),
+                 0,
+                 node,
+                 current_time,
+                 current_price,
+                 current_co2,
+                 [])]
+    closed_set = set()
 
-    return list(gares)
+    while open_set:
+        open_set.sort()  # Sort by f_score
+        f_score, g_score, current_node, time, price, co2, path = open_set.pop(0)
+
+        if current_node['gare'] == destination:
+            return {
+                'heure': time,
+                'prix': price,
+                'co2': co2,
+                'path': path + [destination]
+            }
+
+        closed_set.add(current_node['gare'])
+
+        for train in current_node['trains']:
+            nom_train = list(train.keys())[0]
+            next_node = train[nom_train]
+            next_time = next_node['heure']
+            next_price = next_node['prix']
+            next_co2 = next_node['co2']
+
+            if next_node['gare'] not in closed_set:
+                g_score_next = g_score + 1  # Assuming each step has a cost of 1, can be adjusted based on the problem
+                f_score_next = g_score_next + heuristique(next_node['heure'], next_node['prix'], next_node['co2'], poids_heure, poids_prix, poids_CO2)
+                new_path = path + [nom_train, current_node['gare']]
+
+                open_set.append((f_score_next, g_score_next, next_node, next_time, next_price, next_co2, new_path))
+
+    return None  # No path found
 
 
-def find_optimal_journey(gare_départ, gare_arrivée, heure_départ, poids_heure, poids_prix, poids_CO2):
+def find_optimal_journey(gare_départ, gare_arrivée, heure_départ, choix_algorithme, choix_dataset, poids_heure, poids_prix, poids_CO2):
     heure_départ = float(heure_départ)
 
-    arbre = transform_data_tree(trains, gare_départ, heure_départ, 0, 0)
+    if choix_dataset == "Démo 10 trains":
+        data_trains = trains_demo
+    elif choix_dataset == "50 trains":
+        data_trains = trains
 
-    resultat_json = find_optimal_path_DFS(arbre, gare_arrivée, poids_heure, poids_prix, poids_CO2)
+    arbre = transform_data_tree(data_trains, gare_départ, heure_départ, 0, 0)
 
-    img_graph = display_graph(trains, gare_départ, 0)
+    if choix_algorithme == "Depth First Search":
+        resultat_json = find_optimal_path_DFS(arbre, gare_arrivée, poids_heure, poids_prix, poids_CO2)
+    elif choix_algorithme == "A star":
+        resultat_json = find_optimal_path_A_star(arbre, gare_arrivée, poids_heure, poids_prix, poids_CO2)
+
+    img_graph = display_graph(data_trains, gare_départ, 0)
 
     if resultat_json:
-        return (f"Heure: {resultat_json['heure']}h\n"
+        return (f"Heure d'arrivée: {resultat_json['heure']}h\n"
                 f"Prix: {resultat_json['prix']}€\n"
                 f"CO2: {resultat_json['co2']}gCO2\n"
                 f"Chemin: {' -> '.join(resultat_json['path'])}", img_graph)
