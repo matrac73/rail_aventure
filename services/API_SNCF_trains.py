@@ -67,4 +67,4 @@ for page in range(1, nb_inference+1):
         print("je suis à la page", page, "---", dp.shape)
 
 df = pd.concat(dfs)
-df.to_csv("./SNCF_trains.csv")
+df.to_csv("./data/SNCF_trains.csv")
