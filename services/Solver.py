@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import math
 import requests
+from mpl_toolkits.basemap import Basemap
 from dotenv import load_dotenv
 import os
 import csv
@@ -158,6 +159,41 @@ def display_graph(trains, gare_depart, heure_depart):
     return temp_file
 
 
+def plot_train_route(route):
+    df = pd.read_csv('data/SNCF_gares.csv')
+    df = df.fillna('')
+
+    plt.figure(figsize=(10, 6))
+    m = Basemap(llcrnrlon=-6, llcrnrlat=40, urcrnrlon=11, urcrnrlat=52, projection='merc')
+    m.drawcoastlines()
+    m.drawcountries()
+    m.drawstates()
+    m.fillcontinents(color='lightgreen', lake_color='lightblue')
+    m.drawmapboundary(fill_color='lightblue')
+    m.drawmapscale(-2, 42, 0, 42, 500, barstyle='fancy')
+
+    if route is not None:
+        gares = [stop for stop in route['path'] if 'train_' not in stop and 'vehicle_journey' not in stop]
+        positions = {}
+        for gare in gares:
+            gare_data = df[df['name'].str.contains(gare, case=False)]
+            if not gare_data.empty:
+                positions[gare] = (gare_data['lon'].values[0], gare_data['lat'].values[0])
+
+        lon, lat = [], []
+        for gare in route['path']:
+            if 'train_' not in gare and 'vehicle_journey' not in gare:
+                lon.append(positions[gare][0])
+                lat.append(positions[gare][1])
+        x, y = m(lon, lat)
+        m.plot(x, y, marker="o", color='red', markersize=5)
+
+    temp_file = "/tmp/plan_parcours.png"
+    plt.savefig(temp_file, format="png", dpi=300)
+    plt.close()
+    return temp_file
+
+
 def heuristique(heure, prix, co2, poids_heure, poids_prix, poids_co2):
     valeur_heuristique = poids_heure * heure + poids_prix * prix + poids_co2 * co2
     return valeur_heuristique
@@ -282,6 +318,8 @@ def find_optimal_journey(gare_départ, gare_arrivée, heure_départ, choix_algor
         data_trains = API_call(4)
     elif choix_dataset == "API SNCF 1000 trains":
         data_trains = API_call(40)
+    elif choix_dataset == "API SNCF 1000 trains":
+        data_trains = API_call(400)
 
     arbre = transform_data_tree(data_trains, gare_départ, heure_départ, 0, 0)
 
@@ -293,14 +331,15 @@ def find_optimal_journey(gare_départ, gare_arrivée, heure_départ, choix_algor
         resultat_json = find_optimal_path_BFS(arbre, gare_arrivée, poids_heure, poids_prix, poids_CO2)
 
     img_graph = display_graph(data_trains, gare_départ, 0)
+    img_parcours = plot_train_route(resultat_json)
 
     if resultat_json:
         return (f"Heure d'arrivée: {resultat_json['heure']}h\n"
                 f"Prix: {resultat_json['prix']}€\n"
                 f"CO2: {resultat_json['co2']}gCO2\n"
-                f"Chemin: {' -> '.join(resultat_json['path'])}", img_graph)
+                f"Chemin: {' -> '.join(resultat_json['path'])}", img_parcours, img_graph)
     else:
-        return (f"Aucun chemin trouvé vers {gare_arrivée}", img_graph)
+        return (f"Aucun chemin trouvé vers {gare_arrivée}", img_parcours, img_graph)
 
 
 def page_train(numero_page):
@@ -386,6 +425,8 @@ def display_train(choix_dataset):
         nb_pages = 4
     elif choix_dataset == "API SNCF 1000 trains":
         nb_pages = 40
+    elif choix_dataset == "API SNCF 10000 trains":
+        nb_pages = 400
 
     api_data = API_call(nb_pages)
 
@@ -398,3 +439,31 @@ def display_train(choix_dataset):
     train_df = pd.DataFrame(train_list)
 
     return train_df
+
+
+def display_gares():
+    csv_file_gares = 'data/SNCF_gares.csv'
+    gares_df = get_stations(csv_file_gares)
+    df = pd.read_csv("./data/SNCF_gares.csv", encoding="ISO-8859-1")
+
+    lng_var = df[(df['lat'] > 40) & (df['lat'] < 52) & (df['lon'] > -6) & (df['lon'] < 11)]["lon"].tolist()
+    lat_var = df[(df['lat'] > 40) & (df['lat'] < 52) & (df['lon'] > -6) & (df['lon'] < 11)]["lat"].tolist()
+
+    plt.figure(figsize=(10, 6))
+    m = Basemap(llcrnrlon=-6, llcrnrlat=40, urcrnrlon=11, urcrnrlat=52, projection='merc')
+    m.drawcoastlines()
+    m.drawcountries()
+
+    m.drawstates()
+    m.fillcontinents(color='lightgreen', lake_color='lightblue')
+    m.drawmapboundary(fill_color='lightblue')
+
+    m.drawmapscale(-2, 42, 0, 42, 500, barstyle='fancy')
+
+    x, y = m(lng_var, lat_var)
+    m.scatter(x, y, marker="o", color='red', s=3)
+
+    temp_file = "/tmp/plan_gares.png"
+    plt.savefig(temp_file, format="png", dpi=300)
+    plt.close()
+    return gares_df, temp_file
